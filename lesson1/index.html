@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML DOM</title>
+
+    <!-- ClassList Property -->
+    <!-- <style>
+        .red {
+            color: red;
+        }
+    </style> -->
+
+    <!-- PreventDefault-->
+    <!-- Khi click vào input mới hiện ra li -->
+    <style>
+        ul {
+            display: none;
+        }
+
+        input:focus ~ ul {
+            display: block;
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+    <!--get elements methods-->
+    <!-- <h1 id="heading">HTML DOM</h1>
+        <h2 class="heading">HTML DOM</h2>
+        <h2 class="heading">HTML DOM</h2>
+        <h2 class="heading">HTML DOM</h2>
+        <h2 class="heading">HTML DOM</h2>
+
+        <form action="" id="form-1"></form>
+        <form action="" id="form-2"></form>
+        <form action="" id="testForm"></form>
+
+        <a href="" name="youtube">My youtube</a>
+
+        <p>Hello</p> -->
+
+    <!--get elements methods 2-->
+    <!-- <h1 class="heading">HTML DOM</h1>
+
+        <div class="box-1">
+            <ul>
+                <li>JavaScript 1</li>
+                <li>PHP 1</li>
+            </ul>
+
+            <p>Test para</p>
+        </div>
+
+        <div class="box-2">
+            <ul>
+                <li>JavaScript 2</li>
+                <li>PHP 2</li>
+            </ul>
+
+        </div> -->
+
+    <!--Attribute node & Text node-->
+    <!-- <div class="box">
+            <h1 id="heading" class="heading" title="heading">Heading</h1>
+        </div> -->
+
+    <!--DOM Attribute-->
+    <!-- <h1 class="heading-text" name="name-text">Heading</h1> -->
+
+    <!--Bai tap 1-->
+    <!-- <div>
+            <h1>Bài tập 1.1</h1>
+            <h1>Bài tập 1.2</h1>
+        </div>
+
+        <div>
+            <a href="text-1">Bai tap 1.5</a>
+            <a href="">Bai tap 1.6</a>
+        </div>
+        
+        <img src="" alt="">
+        <img src="" alt=""> -->
+
+    <!--InnerText vs textContent Property-->
+    <!-- <h1 class="heading">Heading text
+
+            <span>Heading</span>
+            <span>Text</span>
+
+            <style>
+                .box {
+                    width: 100px;
+                    height: 100px;
+                }
+            </style>
+
+        </h1> -->
+
+    <!--InnerHTML vs OuterHTML Property-->
+    <!-- <div class="box">
+            <h1 title="Heading2">New Heading2</h1>
+        </div> -->
+
+
+    <!--Bài tập -->
+    <!-- <ul class="courses-list">
+
+        </ul> -->
+
+    <!-- Node properties -->
+    <!-- <div class="box">
+            <h1 title="Heading">New heading</h1>
+        </div> -->
+
+    <!-- DOM CSS -->
+        <!-- <div class="box">
+
+        </div> -->
+        
+    <!-- ClassList Property -->
+        <!-- <div class="box box-2">
+            <h1>CLASS LIST</h1>
+        </div> -->
+
+    <!-- DOM events -->
+        <!-- Attribute events -->
+            <!-- 
+                - this sẽ trả lại chính cái node element của cái element đang sd trong event
+                - vd: mình đang sd lắng nghe onclick trên h1, khi click vào h1, hoặc con của h1
+                    thì đều trả lại cái giá trị cho từ khóa this, lúc này this = elementNode của h1
+                    cụ thể elementNode lúc này là : <h1 onclick="console.log(this)">DOM events</h1>
+                - this.innerText dùng để lấy đoạn text ở h1
+            -->
+            <!-- <h1 onclick="console.log(this.innerText)">DOM events</h1> -->
+
+
+            <!-- 
+                - Lúc này ta click vào span, tức là thẻ con của h1, sự kiện click vẫn lọt vào và trả về elementNode
+                - Nó sẽ trả về elementNode của thẻ span và h1
+                - Nó sẽ lắng nghe thẻ con trước, r mới đến thẻ cha
+                - Người ta gọi đây là sự kiện nổi bọt
+            -->
+            <!-- <h1 onclick="console.log(this)">
+                <span onclick="console.log(this)">DOM events</span>
+            </h1> -->
+
+        <!-- Assign event uisng the element node -->
+            <!-- <h1>
+                <span>DOM events 1</span>
+            </h1>
+
+            <h1>
+                <span>DOM events 2</span>
+            </h1>
+
+            <h1>
+                <span>DOM events 3</span>
+            </h1> -->
+    
+    <!-- DOM events example -->
+        <!-- <input type="text">
+        <input type="checkbox">
+
+        <select>
+            <option value="value-1">1</option>
+            <option value="value-2">2</option>
+            <option value="value-3">3</option>
+        </select> -->
+
+    <!-- PreventDefault-->
+        <!-- VD 1 -->
+        <!-- <a href="https://f8.edu.vn">
+            Học lập trình
+        </a>
+
+        <br>
+
+        <a href="https://www.youtube.com/">
+            Xem video
+        </a>
+
+        <br> -->
+
+        <!-- VD 2: -->
+        <!-- <input placeholder="Xem video">
+
+        <ul>
+            <li>JavaScript</li>
+            <li>PHP</li>
+            <li>Golang</li>
+        </ul> -->
+
+    <!-- stopPropagation -->
+        <!-- - Khi nhấn vào DIV  -> in ra DIV
+            - Khi nhấn Click me! -> in ra DIV và Click me!
+            -> Đây là sự kiện nổi bọt (tức là lấy từ con và lấy cả cha) 
+        -->
+            <!-- <div onclick="console.log('DIV')">
+                DIV
+
+                <button onclick="console.log('Click me!')">Click me!</button>
+            </div> -->
+        
+        <!-- Bắt đầu thực hiện loại bỏ hành vi -->
+            <!-- <div>
+                DIV
+
+                <button>Click me!</button>
+            </div> -->
+
+
+    <!-- Event listener -->
+        <button id="btn">Click me!</button>
+    <script src="./main.js"></script>
+</body>
+
+</html>
