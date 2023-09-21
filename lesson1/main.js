@@ -2344,4 +2344,733 @@ caculate(a, b, cb): Hàm này nhận vào hai đối số a và b, cùng với m
         ** Cả 2 đều có thể sd khi muốn xử lí nhiều việc khi event xảy ra
         nhưng nếu phương thức quá dài, thì nên dùng Event Listener để bóc tách ra, giúp đỡ rối
 */
+
+// ----------------------------------------------------------------
+/*
+    JSON là gì?
+        - Là một định dạng dữ liệu (chuỗi)
+        - JavaScript Object Notation
+        - Thể hiện các kiểu dữ liệu: Number, Boolean, Null, String, Array, Object
+        - Có 2 thao tác:    + Mã hóa (Encode)
+                            + Giải mã (decode) có thể hiểu như v, nhưng JSON đơn giản hơn
+        - Được gọi là Stringify: chuyển đổi sang kiểu dữ liệu khác (Từ JavaScript types -> JSON )
+        - Và Parse: từ bảng mã đó dịch lại (Từ JSON -> JavaScript types)
+        - Thể hiện dạng chuỗi ở JSON dùng "" trong '' 
+            vd: var a = '"abc"';
+
+    1. Event listener --> OK
+    2. JSON
+    3. Promise
+    4. Feth
+    5. DOM location
+    6. Local storage
+    7. Session storage
+    8. Coding convention
+    9. Best Practices
+    10. Mistakes
+    11. Performance
+*/
+
+    // 2. JSON
+        // Tạo 1 json: Thể hiện dạng chuỗi ở JSON dùng "" trong '' 
+            // var a = '["JavaScript","PHP"]';
+            // var b = '{"name":"Do Phu","age":20}';
+
+        // Chuyển đổi từ chuỗi JSON sang JavaScript types
+        //parse()
+            // console.log(JSON.parse(a));
+
+        // Chuyển đổi từ JavaScript types sang chuỗi JSON
+        //stringify()
+            // console.log(JSON.stringify([
+            //     'JavaScript',
+            //     'PHP'
+            // ]));
+
+            // console.log(JSON.stringify({
+            //     name: 'Do Phu',
+            //     age: 20
+            // }));
+
+// ----------------------------------------------------------------
+    /* 
+        3. Promise (sync, async): Lời hứa  
+            - Khái niệm đồng bộ (Sync): Khi cons.log ra, thằng nào viết trước chạy trước, viết sau chạy sau
+            
+            - Bất đồng bộ (Async): thằng 2 sẽ chạy trước 1, không theo quy luật trên
+                setTimeout(() => {
+                    cons.log(1)
+                }, 1000)
+
+                cons.log(2)
+            
+            - Những thằng async: setTimeout, setInterval, fetch,XMLHttpRequest, file reading, request animation frame
+            - JavaScript sẽ có thằng callback để xử lý thằng async
+
+            - Nỗi đau (pain)
+                + Callback hell:
+                + Pyramid of doom:
+                        setTimeout(() => {
+                            console.log(1) // viec 1
+                            setInterval(() => {
+                                console.log(2) // viec 2    
+                                setInterval(() => {
+                                    console.log(3) // viec 3
+                                    setInterval(() => {
+                                        console.log(4) // viec 4
+                                    }, 1000);
+                                }, 1000);
+                            }, 1000);
+                        }, 1000);
                 
+            - Lý thuyết, cách hoạt động: 70%
+                + Có 2 bước tạo promise:    1. new Promise
+                                            2. Executor
+                + Nếu không tạo 1 trong 2 bước thành công/ thất bại
+                    -> promise sẽ bị treo, rò rỉ bộ nhớ, đc gọi là Memory leak
+                + Có 3 trạng thái:  1. Pendding: Chờ
+                                    2. Fulfilled: Thành công
+                                    3. Rejected: Tạch
+            
+            - Thực hành, vd
+    */
+
+    // 1. Tạo ra 1 promise: truyền vào 1 function
+    // Khi new Promise, thì sẽ gọi tới func trước khi nhận được tại đối tượng promise
+        // var promise = new Promise( // Object constructor
+        //     function(resolve, reject) { //2. Excutor: trả về 2 tham số func
+        //         // Logic
+        //         // Thành công: resolve()
+        //         // Thất bại: reject()
+
+        //         // truền dữ liệu
+        //         // Fake call API
+        //             // resolve([
+        //             //     {
+        //             //         id: 1,
+        //             //         name: 'JavaScript'
+        //             //     }
+        //             // ]); 
+
+        //             reject('Có lỗi!');
+        //     }
+        // ); 
+
+    // Trả dữ liệu từ executor ra thằng .then, .cath
+        // promise 
+        //     .then(function(courses) {
+        //         console.log(courses)
+        //     })
+        //     .catch(function(error) {
+        //         console.log(error)
+        //     }) // nếu k bắt lỗi sẽ bị đỏ
+        //     .finally(function() {
+        //         console.log('Done!')
+        //     })
+
+    // sử dụng nó: 3 thk dưới đều nhận 1 callback
+    /* 
+        - Khi resolve() đc gọi thì callback của then() đc gọi
+        - Khi reject() đc gọi thì callback của catch() đc gọi
+        - Khi 1 trong resolve/ reject đc gọi thì callback của finally() đc gọi
+        - then() tính từ khi promise được thực thi, sau đó được chấp thuận là thành công
+        - cath() bắt được trạng thái khi có lỗi xảy ra
+    */ 
+        // promise 
+        //     .then(function() {
+        //         console.log('Successfully!')
+        //     })
+        //     .catch(function() {
+        //         console.log('Failure!')
+        //     })
+        //     .finally(function() {
+        //         console.log('Done!')
+        //     })
+
+    /* 
+        CÁCH TRẢ LỜI PHỎNG VẤN
+            EM CÓ NẮM VỀ KHÁI NIỆM PROMISE KO?
+
+            ĐÁP: EM CÓ
+                - PROMISE ĐƯỢC SINH RA ĐỂ XỬ LÍ NHỮNG THAO TÁC BẤT ĐỒNG BỘ
+                - TRƯỚC KHI CÓ PROMISE CHÚNG TA THƯỜNG DÙNG CALLBACK VÀ CB THƯỜNG XẢY RA CÁC VẤN ĐỀ LÀ CALLBACK HELL, KHÓ NHÌN, RỐI CODE
+                    -> PROMISE ĐƯỢC SINH RA TỪ PHIÊN BẢN JAVASCRIPT MỚI HƠN TRONG PHIÊN BẢN ES6
+                    VÀ CHÚNG TA CÓ THỂ SD NÓ ĐỂ KHẮC PHỤC TÌNH TRẠNG CB HELL
+                - ĐỂ TẠO RA PROMISE TA CẦN SD TỪ KHÓA new VS Promise VÀ TRONG CONSTRUCTOR CỦA NÓ, TA SẼ TRUYỀN VÀO 1 EXECUTOR FUNCTION
+                - TRONG EXECUTOR FUNC KHI THỰC THI SẼ NHẬN ĐƯỢC 2 THAM SỐ DẠNG HÀM, 1 LÀ RESOLVE, 2 REJECT
+                - RESOLVE TA GỌI NÓ KHI THAO TÁC LOGIC ĐƯỢC XỬ LÍ THÀNH CÔNG
+                - REJECT TA GỌI NÓ KHI THAO TÁC LOGIC ĐƯỢC XỬ LÍ THẤT BẠI
+                - KHI SD PROMISE, THÌ TA SẼ SD QUA NHỮNG PHƯƠNG THỨC LÀ .then(), . cath()
+                - CẢ 2 ĐỀU NHẬN ĐC 1 CALLBACK LÀ FUNC
+                - .then() ĐƯỢC THỰC THI KHI PROMISE ĐƯỢC RESOLVE
+                - .catch() ĐƯỢC THỰC THI KHI PROMISE BỊ REJECT
+    */
+
+// ----------------------------------------------------------------
+/* 
+    Promise (chain): Tính chất chuỗi
+    Lý thuyết, cách hoạt động: 30%                    
+*/
+
+        // var promise = new Promise( 
+        //     function(resolve, reject) { 
+        //         resolve(); 
+
+        //         // reject('Có lỗi!');
+        //     }
+        // ); 
+
+    /* 
+        - .then(1) return cái gì thì ta có thể nhận value đó ở .then(2)
+        - kết quả trả về của func trước sẽ là tham số đầu vào của func sau
+        - quy trình chạy
+            + resolve xong: .then1 return 1 -> đưa vào .then2 rồi cons.log 1 -> ...
+
+        - trong func callback của .then1, nếu nó k return ra 1 promise, thì nó sẽ chạy ngay thằng .then2
+        - khi .then1 return ra 1 promise, thì phải chờ .then1 chạy xong .then2 mới được chạy
+        vd: 
+            .then(function() {
+                return new Promise(function(resolve) { // return ra 1 promise
+                    setTimeout(resolve, 3000);
+                });
+            })
+            .then(function(data) {
+                console.log(data)
+            })
+    */
+        // promise // đây là 1 khối code, chuỗi
+        //     .then(function() {
+        //         return 1;
+        //     })
+        //     .then(function(data) {
+        //         console.log(data)
+        //         return 2;
+        //     })
+        //     .then(function(data) {
+        //         console.log(data)
+        //         return 3;
+        //     })
+        //     .then(function(data) {
+        //         console.log(data)
+        //     })
+        //     .catch(function(error) {
+        //         console.log(error)
+        //     }) 
+        //     .finally(function() {
+        //         console.log('Done!')
+        //     })
+
+/* 
+    Giaỉ quyết bài toán:
+    In ra số 1, sau 1s in ra số 2, ...
+    không được dùng setInterval
+*/
+    
+    // function sleep(ms) { 
+    //     return new Promise((resolve) => {
+    //         setTimeout(resolve ,ms);
+    //     });
+    // };
+
+    // sleep(1000)
+    //     .then(() => {
+    //         console.log(1);
+    //         return sleep(1000);
+    //     })
+    //     .then(() => {
+    //         console.log(2);
+    //         return sleep(1000);
+    //     })
+    //     .then(() => {
+    //         console.log(3);
+    //         return sleep(1000);
+    //     })
+    //     .then(() => {
+    //         console.log(4);
+    //         return sleep(1000);
+    //     })
+
+/* 
+    - Đây là ví dụ về callback hell trong truyền thuyết, và cách sử dụng Promise để giải quyết nó.
+    - Các bạn có thể thấy khi tạo ra 1 đoạn code callback hell sẽ dẫn đến khó đọc code, 
+    thay vì viết như thế, chúng ta có thể áp dụng tính chất chuỗi (chain) của Promise để tạo ra 1 đoạn code dễ nhìn hơn mà vẫn đảm bảo đúng logic.
+*/
+
+    // function hell(value, cb) {
+    //     cb(value);
+    // }
+
+    // Không sử dụng Promise dẫn đến tạo ra callback hell 
+    // hell(1, function (valueFromA) {
+    //     hell(valueFromA + 1, function (valueFromB) {
+    //         hell(valueFromB + 1, function (valueFromC) {
+    //             hell(valueFromC + 1, function (valueFromD) {
+    //                 console.log(valueFromD + 1);
+    //             });
+    //         });
+    //     });
+    // });
+
+    // Sử dụng Promise sẽ tạo ra đoạn code dễ đọc hơn và vẫn đảm bảo đúng logic
+    // function notHell(value) {
+    //     return new Promise(function (resolve) {
+    //         resolve(value);
+    //     });
+    // }
+
+    // notHell(1)
+    //     .then(function (value) {
+    //         return value + 1;
+    //     })
+    //     .then(function (value) {
+    //         return value + 1;
+    //     })
+    //     .then(function (value) {
+    //         return value + 1;
+    //     })
+    //     .then(function (value) {
+    //         console.log(value + 1);
+    //     });
+
+// ----------------------------------------------------------------
+/* 
+    Promise methods (resolve, reject, all)
+        - Trong quá trình chạy, nếu 1 trong số chuỗi có 1 chuỗi bị reject thì sẽ k chạy xuống chuỗi còn lại
+        - Khi đó nó sẽ lọt vào .catch
+*/
+
+    // function sleep(ms) { 
+    //     return new Promise((resolve) => {
+    //         setTimeout(resolve ,ms);
+    //     });
+    // };
+
+    // sleep(1000)
+    //     .then(() => {
+    //         console.log(1);
+    //         return sleep(1000);
+    //     })
+    //     .then(() => {
+    //         console.log(2);
+    //         return new Promise((resolve, reject) => {
+    //             reject('Có lỗi!');
+    //         });
+    //     })
+    //     .then(() => {
+    //         console.log(3);
+    //         return sleep(1000);
+    //     })
+    //     .then(() => {
+    //         console.log(4);
+    //         return sleep(1000);
+    //     })
+    //     .catch((err) => {
+    //         console.log(err);
+    //     });
+
+/* 
+    1. Promise.resolve
+    2. Promise.reject
+    3. Promise.all
+*/
+
+    // var promise = new Promise((resolve, reject) => {
+    //     // resolve('Success!')
+    //     reject('Error!')
+        
+    // });
+
+    // promise
+    //     .then((result) => {
+    //         console.log('result: ', result);
+    //     })
+    //     .catch((err) => {
+    //         console.log('err: ', err);
+    //     });
+
+/* 
+    - Không cần new Promise khi muốn mặc định nó đã thành công/ thất bại
+    - Có một số thư viện có quy ước: output luôn luôn là 1 promise
+        -> Dù thành công/ thất bại, nó vẫn luôn trả về 1 promise
+*/
+    
+    // Luôn thành công: k bao giờ lọt vào .catch()
+        // var promise = Promise.resolve('Success!');
+
+    // Luôn thất bại: k bao giờ lọt vào .then()
+        // var promise = Promise.reject('Error!');
+
+        // promise
+        //     .then((result) => {
+        //         console.log('result: ', result);
+        //     })
+        //     .catch((err) => {
+        //         console.log('err: ', err);
+        //     });
+
+/* 
+    Promise.all
+        - Chạy song song 2 promise nếu 2 promise k phụ thuộc nhau
+        - Gíup rút ngắn thời gian 
+        - Muốn lấy kết quả của 1 và 2 để làm việc với nhau
+*/
+
+    // Trường hợp cả 2 đều thành công
+        // var promise1 = new Promise((resolve) => {
+        //     setTimeout(() => {
+        //         resolve([1]);
+        //     }, 1000);
+        // });
+
+        // var promise2 = new Promise((resolve) => {
+        //     setTimeout(() => {
+        //         resolve([2, 3]);
+        //     }, 2000);
+        // });
+
+    // Hợp nhất 2 mảng có output là [1, 2, 3]
+    // Promise.all([]): nhận vào 1 đối số là 1 []
+    // Khi cả 2 promises đều xong thì mới lọt vào .then()
+        // Promise.all([promise1, promise2])
+        //     .then((result) => {
+        //         var result1 = result[0];
+        //         var result2 = result[1];
+
+        //         console.log(result1.concat(result2));
+        //     });
+
+    // Cách viết ES6
+        // Promise.all([promise1, promise2])
+        // .then(([result1, result2]) => {
+        //     console.log(result1.concat(result2));
+        // });
+
+    
+    // Trường hợp 1 trong 2 thất bại: thì sẽ ngừng làm việc và ném ra lỗi
+        // var promise1 = Promise.resolve(
+        //     setTimeout(() => {
+        //         resolve([1]);
+        //     }, 1000)
+        // );
+
+        // var promise2 = Promise.reject('Có lỗi!');
+
+        // Promise.all([promise1, promise2])
+        // .then(([result1, result2]) => {
+        //     console.log(result1.concat(result2));
+        // })
+        // .catch((error) => {
+        //     console.log(error);
+        // });
+
+// ----------------------------------------------------------------
+/* 
+    Promise example
+*/
+/*
+    // Nơi lưu trữ users
+        var users = [
+            {
+                id: 1,
+                name: 'Do Phu',
+            },
+            {
+                id: 2,
+                name: 'Do Phong',
+            },
+            {
+                id: 3,
+                name: 'Do Phat',
+            },
+        ];
+
+    // Nơi lưu trữ cmt
+        var comments = [
+            {
+                id: 1,
+                user_id: 1,
+                content: 'Anh Phong chưa ra video :<<'
+            },
+            {
+                id: 2,
+                user_id: 2,
+                content: 'Anh vừa ra xong em ơi :3'
+            },
+        ]
+    
+    // 1. Gọi lên API để Lấy comments
+    // Fake API (mô phỏng 1 hàm để gọi qua url ra ông backend trả về để lấy đc dữ liệu)
+        function getComments() { // hàm lấy ra nd qua internet, chỉ là fake
+            return new Promise((resolve) => {
+                // mô phỏng internet bị chậm sau 1s
+                setTimeout(() => { 
+                    resolve(comments); // reso comments fake
+                }, 1000)
+            })
+        }
+
+        // Viết hàm để chọc vào users, để lấy ra đúng user có id nằm trong list userID
+            function getUserByIds(userIds) {
+                return new Promise((resolve) => {
+                    var result = users.filter((user) => { // Lọc các user nằm trong list userID
+                        return userIds.includes(user.id); // includes(user.id): chỉ bảo gồm userId thôi
+                    });
+
+                    setTimeout(() => { 
+                        resolve(result); 
+                    }, 1000)
+                });
+            }
+
+        
+        // Lấy ra cmt
+            getComments() 
+                .then((comments) => {
+                    // console.log(comments); // Lấy ra cmt
+                    // Lấy ra list userID, dùng map để nhặt ra cái id
+                        var userIds = comments.map((comment) => {
+                            return comment.user_id;
+                        });
+                    
+                    // 2. Từ cmt lấy ra user_id
+                    // trả về cái userID đã lấy trong list UserID
+                        return getUserByIds(userIds) // truyền listUserID vào
+                            // trả về cái user có user_id tương ứng
+                            .then((users) => {
+                                return { // trả dữ liệu về dạng object
+                                    users: users,
+                                    comments: comments,
+                                }
+                            })
+                })
+
+                // ở đây nhận dữ liệu của users
+                .then((data) => { 
+                    
+                    // Get ra id của thẻ ul, dùng DOM
+                        var commentBlock = document.getElementById('comment-block');
+
+                    // Render mã html dạng chuỗi để hiển thị commentBlock
+                        var html = '';
+                    
+                    // Lặp qua từng cmt trong data comments
+                        data.comments.forEach((comment) => {
+                            
+                            // 3. Từ user_id lấy ra user tương ứng
+                            // Get ra user tương ứng thông qua id
+                            var user = data.users.find((user) => { // find: tìm cái user dựa trên id trả về bên dưới
+                                return user.id === comment.user_id; // trả về id của user === với user_id trong cmt
+                            });
+
+                            // Nối vào chuỗi html
+                            html += `<li>${user.name}: ${comment.content}</li>`;
+                            
+                        });
+
+                        // Lấy nd trong chuỗi html gán vào conmmentBlock
+                        commentBlock.innerHTML = html;
+
+                });
+*/
+
+// ----------------------------------------------------------------
+/* 
+    Fetch: 
+        - Gọi lên API để lấy ra dữ liệu đc lưu trữ ở backend
+        - Front-end nhận giá trị đó, và render ra, hiển thị lên trình duyệt
+        - API (Application Programming Interface): Giao diện lập trình ứng dụng
+        - API là cổng giao tiếp giữa các phần mềm
+        - Back-end -> API (URL)-> Fetch -> JSON/ XML -> JSON.parse -> JavaScript types -> Render ra cái giao diện với HTML
+
+*/
+/*
+    // Lấy api post từ trang https://jsonplaceholder.typicode.com/
+    var postAPI = 'https://jsonplaceholder.typicode.com/posts'
+
+    //fetch trả lại 1 cái stream (luồng dữ liệu trả về), có thể xem là 1 cái phản hồi (response)
+    fetch(postAPI)
+        .then((response) =>{
+            return response.json(); // cầm cái response được trả về rồi trả lại 1 promise
+            // việc trả về này có tác dụng là parse cái JSON
+            // JSON.parse: JSON -> JavaScript types
+            // Tức là .then này đã mặc định trả về 1 promise và JSON tự parse thành JavaScript types
+        })
+        .then(function(posts){
+        // console.log(posts)
+            //map: nhận về 1 mảng tương ứng vs số phần tử = số ptử của post, nhưng lại trả về dạng chuỗi (tức có các dấu phẩy ngăn cách)
+            var htmls = posts.map((post) => {
+                return `<li>
+                    <h2>${post.title}</h2>
+                    <p>${post.body}</p>
+                </li>`;
+            })
+
+            var html = htmls.join('');// join để loại bỏ dấu phẩy ngăn cách tron mảng
+            document.getElementById('post-block').innerHTML = html;
+        })
+*/
+
+// ----------------------------------------------------------------
+/*  
+    Fetch
+        - JSON server: fake ra REST API/ MOCK API (tạo ra 1 cái API Server)
+        - Xem file PUSH.txt ở ổ E để biết cách tạo json server
+*/
+    // Lấy API sau khi tạo json server
+    // var courseAPI = 'http://localhost:3000/courses'
+
+    // fetch(courseAPI)
+    //     .then((response) => {
+    //         return response.json();
+    //     })
+    //     .then((courses) => {
+    //         console.log(courses);
+    //     })
+
+// ----------------------------------------------------------------
+/* 
+    Sử dụng Postman làm việc với REST API
+        - Muốn sửa, xóa nhớ thêm /id sau url để thao tác trên đó
+
+    Thêm/sửa/xóa khóa học với Fetch và REST API
+    Tìm cách viết post, put, delete, get qua link https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+*/
+    
+    // Tạo biến lưu API
+        var courseAPI = 'http://localhost:3000/courses';
+
+    // Hàm chạy
+        function start() {
+            // gọi các hàm trong đây
+            // getCourses(courses => renderCourses(courses)); 
+            /* 
+                đối số của renderCourses là courses và callback (courses => renderCourses(courses)) lại trả về courses
+                -> 2 đối số của 2 thk trùng nhau -> ta có thể viết ở dòng 2952
+                vì getCourses nhận vào 1 func là renderCourses -> ta truyền thẳng func vào func, gọi là func lồng nhau
+            */
+            getCourses(renderCourses);
+
+            handleCreateForm();
+        }
+
+        start();
+
+    // Functions
+    // Get dữ liệu ra
+        function getCourses(callback) {
+            fetch(courseAPI)
+                .then(response => response.json())
+                .then(callback); // dùng cb để gọi lại getCourses
+        }
+
+        // Đưa dữ liệu ra trình duyệt
+        function renderCourses(courses) {
+            var listCoursesBlock = document.querySelector('#list-courses');
+
+            // đẩy dữ liệu ra html
+            var htmls = courses.map(course => 
+                `<li>
+                    <h4>${course.name}</h4>
+                    <p>${course.description}</p>
+                    <button onclick="handleDeleteCourse(${course.id})">Xóa</button>
+                    <button id="update-btn" onclick="handleUpdateCourse(${course.id})">Sửa</button>
+                </li>`)
+
+            listCoursesBlock.innerHTML = htmls.join('');
+                
+        }
+
+
+    // Xử lí thêm courses
+        function createCourse(data, callback) { 
+            var options = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: JSON.stringify(data)
+            };
+            fetch(courseAPI, options)
+                .then(response => response.json())
+                .then(callback);
+        }
+
+    // Xử lí xóa courses
+        function handleDeleteCourse(id) {
+            var options = {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            };
+            fetch(courseAPI + '/' + id, options)
+                .then(response => response.json())
+                .then(() => {
+                    getCourses(renderCourses);
+                });
+        }
+
+        function handleCreateForm() {
+            var createBtn = document.querySelector('#create');
+
+            createBtn.onclick = (() => {
+                var name = document.querySelector('input[name="name"]').value;
+                var description = document.querySelector('input[name="description"]').value;
+
+                var formData = {
+                    name: name,
+                    description: description
+                }
+                createCourse(formData, function() {
+                    getCourses(renderCourses);
+                });
+
+            });
+        }
+
+        function handleUpdateCourse(id) {
+            var options = {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: JSON.stringify(data)
+            };
+            fetch(courseAPI + '/' + id, options)
+                .then(response => response.json())
+                .then(() => {
+                    getCourses(renderCourses);
+                });
+        }
+
+        function updateCourse() {
+            var updateBtn = document.querySelector('#update-btn');
+
+            updateBtn.onclick = (() => {
+                var name = document.querySelector('input[name="name"]').value;
+                var description = document.querySelector('input[name="description"]').value;
+            });
+
+            var formData = {
+                    name: name,
+                    description: description
+                }
+                handleUpdateCourseurse(formData, function() {
+                    getCourses(renderCourses);
+                });
+        }
+
+
+    
+        
+
+
+    
+
+    
+        
+
+        
