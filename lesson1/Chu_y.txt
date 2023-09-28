@@ -1,1 +1,1 @@
-Học tới ài Fetch nhớ lấy file json_server xuống
+Học tới bài Fetch nhớ lấy file json_server xuống
