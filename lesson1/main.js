@@ -2300,7 +2300,7 @@ caculate(a, b, cb): Hàm này nhận vào hai đối số a và b, cùng với m
                     1. eventName: bỏ on ở trước, vd: onclick -> click
                     2. callback
                 - Nó sẽ gọi theo thứ tự được add vào
-                - Phải tách functione ở các đối số ra ngoài riêng 
+                - Phải tách function ở các đối số ra ngoài riêng 
                     thì việc hủy bỏ lắng nghe mới có thể đồng loạt sử dụng cả khi lắng nghe và hủy bỏ lắng nghe
         */
             // var btn = document.getElementById('btn')
@@ -2935,133 +2935,1063 @@ caculate(a, b, cb): Hàm này nhận vào hai đối số a và b, cùng với m
     Thêm/sửa/xóa khóa học với Fetch và REST API
     Tìm cách viết post, put, delete, get qua link https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 */
-    
-    // Tạo biến lưu API
-        var courseAPI = 'http://localhost:3000/courses';
 
-    // Hàm chạy
-        function start() {
-            // gọi các hàm trong đây
-            // getCourses(courses => renderCourses(courses)); 
-            /* 
-                đối số của renderCourses là courses và callback (courses => renderCourses(courses)) lại trả về courses
-                -> 2 đối số của 2 thk trùng nhau -> ta có thể viết ở dòng 2952
-                vì getCourses nhận vào 1 func là renderCourses -> ta truyền thẳng func vào func, gọi là func lồng nhau
-            */
-            getCourses(renderCourses);
+//     //Tạo biến lưu API
+//         var courseApi = 'http://localhost:3000/courses';
 
-            handleCreateForm();
-        }
+// // -----------------------------------------------------------------------------------------
+//     // Hàm chạy
+//         function start() {
+//             // Sau khi getCourses thì sẽ renderCourses
+//                 // getCourses((courses) => {
+//                 //     renderCourses(courses);
+//                 // })
 
-        start();
-
-    // Functions
-    // Get dữ liệu ra
-        function getCourses(callback) {
-            fetch(courseAPI)
-                .then(response => response.json())
-                .then(callback); // dùng cb để gọi lại getCourses
-        }
-
-        // Đưa dữ liệu ra trình duyệt
-        function renderCourses(courses) {
-            var listCoursesBlock = document.querySelector('#list-courses');
-
-            // đẩy dữ liệu ra html
-            var htmls = courses.map(course => 
-                `<li>
-                    <h4>${course.name}</h4>
-                    <p>${course.description}</p>
-                    <button onclick="handleDeleteCourse(${course.id})">Xóa</button>
-                    <button id="update-btn" onclick="handleUpdateCourse(${course.id})">Sửa</button>
-                </li>`)
-
-            listCoursesBlock.innerHTML = htmls.join('');
+//             /*  
+//                 - Hàm trên là 1 func lồng func, đối số của renderCourses là courses
+//                 - Callback: (courses) => {
+//                     renderCourses(courses);
+//                 } trả về 1 thằng courses trùng với đối số của renderCourses
+//                 -> có thể viết ngắn gọn lại bằng cách truyền func vào như dòng 2961
+//                 - Không nên gọi func (renderCourses()) mà truyền vào renderCourses, tức k có dấu ngoặc
+//                 - Trong getCourses, renderCourses sẽ được truyền vào dưới dạng callback
+//                 - Callback sẽ được gọi khi fetch(courseApi) ở dòng 2972 sẽ gọi callback, tức gọi ngược lại thằng renderCourses
+//                 -> trả lại dữ liệu cho func renderCourses là 1 courses
                 
-        }
+//             */
+//                 getCourses(renderCourses);
+
+//                 handleCreateForm();
+            
+
+//         }
+
+//         start();
+
+// // -----------------------------------------------------------------------------------------
+//     // Functions
+
+//     // Hàm lấy ra khóa học, dùng callback
+//         function getCourses(callback) {
+//             fetch(courseApi)
+//                 .then((response) => response.json())
+//                 .then(callback);
+//         }
+
+//     // Chức năng READ
+//     // Hàm render code, đưa dữ liệu ra trình duyệt (giống load lại dữ liệu bên java)
+//         function renderCourses(courses) {
+//                 var listCoursesBlock = document.querySelector('#list-courses');
+//             // Đẩy dữ liệu ra HTML
+//                 var htmls = courses.map((course) => // thằng map được truyền vào 1 func có tham số là course số ít
+//                     // chỗ này là return
+//                     ` 
+//                         <li class="course-Item-${course.id}">
+//                             <h4>${course.name}</h4>
+//                             <p>${course.description}</p>
+//                             <button onclick="handleDeleteCourses(${course.id})">Xóa</button>
+//                             <button id="update" onclick="handleUpdateCourses(${course.id})">Sửa</button>
+//                         </li>
+//                     `
+//                 );
+
+//             // Dùng innerHTML để ném listCoursesBlock ra HTML
+//             // Sau đó dùng join để loại bỏ dấu phẩy
+//                 listCoursesBlock.innerHTML = htmls.join('');
+//         }
+
+// // -----------------------------------------------------------------------------------------
+//     // Hàm xử lí gửi yêu cầu để tạo mới dữ liệu POST
+//     /* 
+//         - Khi callback trên handleCreateCourses thì nó sẽ .then(callback) ở dòng 3018,
+//         -> lúc này nó sẽ nhận chính dữ liệu mới đã tạo -> gọi lại cả thằng getCourse(renderCourse) để load lại dữ liệu
+//     */
+//         function handleCreateCourses(data, callback) {
+//             // Tạo biến options
+//             var options = {
+//                 method: "POST",
+//                 headers: {
+//                     "Content-Type": "application/json",
+//                 },
+//                 body: JSON.stringify(data)
+//             }
+
+//             fetch(courseApi, options) // fetch truyền vào 2 đối số gồm: url, data dưới dạng object
+//                 .then((response) => response.json())
+//                 .then(callback);
+//         }
 
 
-    // Xử lí thêm courses
-        function createCourse(data, callback) { 
-            var options = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: JSON.stringify(data)
-            };
-            fetch(courseAPI, options)
-                .then(response => response.json())
-                .then(callback);
-        }
+//     //  Hàm xử lí gửi yêu cầu để xóa dữ liệu DELETE
+//         function handleDeleteCourses(id) {
+//             // Tạo biến options
+//             var options = {
+//                 method: "DELETE",
+//                 headers: {
+//                     "Content-Type": "application/json",
+//                 },
+//             }
 
-    // Xử lí xóa courses
-        function handleDeleteCourse(id) {
-            var options = {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
+//             fetch(courseApi + '/' + id, options) // (courseApi + '/' + id) theo quy tắc là thêm /id vào sau url để xóa dữ liệu theo id đó
+//                 .then((response) => response.json())
+//                 .then(() => { 
+//                     // c1: Sau khi xóa, nó sẽ call lại Api và load lại hết dữ liệu, nó sẽ k tối ưu vì mỗi lần xóa là mỗi lần phải load lại hết dữ liệu
+//                         // getCourses(renderCourses);
+
+//                     /* 
+//                         - c2: Xóa trực tiếp element ở DOM, sẽ tối ưu hơn vì nó xóa thẳng ở DOM và k cần gọi lại API
+//                         - Tạo cho nó 1 class vào thẻ li ở dòng 2989 
+//                     */
+//                     // Get cái class có id cần xóa ra
+//                         var courseItem = document.querySelector('.course-Item-' + id);
+
+//                         if (courseItem) { // nếu có id đó thì xóa khỏi DOM
+//                             courseItem.remove();
+//                         }
+
+//                 });
+//         }
+
+
+//     // Hàm xử lí trong form
+//         function handleCreateForm() {
+//             //  Trong đây để viết logic để thêm mới dữ liệu
+//             // Gọi id của nút create
+//                 var createBtn = document.querySelector('#create');
+
+//             // Tạo ra hành vi lắng nghe khi click vào create
+//                 createBtn.onclick = function() {
+//                     // Lấy dữ liệu từ input khi nhấn click
+//                         var name = document.querySelector('input[name="name"]').value;
+//                         var description = document.querySelector('input[name="description"]').value;
+
+//                     // Tạo biến formData chứa object để nhận data từ input
+//                         var formData = {
+//                             name: name,
+//                             description: description
+//                         };
+
+//                     // hàm create sẽ nhận 2 tham số là data, và callback, lúc này truyền vào callback thằng getCourses(renderCourses);, để nó load lại dữ liệu
+//                         handleCreateCourses(formData, (() => {
+//                             getCourses(renderCourses);
+//                             document.querySelector('input[name="name"]').value = ""
+//                             document.querySelector('input[name="description"]').value = ""
+//                         })); 
+//                 }
+//         }
+
+
+//     // Hàm xử lí gửi yêu cầu để sửa dữ liệu PUT
+//     // Hàm thực hiện update
+//     /* 
+//         - Khi nhấn sửa, dữ liệu sẽ đổ lên form, lúc này nút create sẽ trở thành nút save
+//         - Sau khi nhấn save, dữ liệu sẽ được lưu mới và in ra màn hình
+//     */
+//         function handleUpdateCourses(id) {
+//             fetch(courseApi + '/' + id)
+//                 .then((response) => response.json())
+//                 .then((data) => {
+//                     // Nhận đc data của item Id được chọn
+//                         // console.log(data);
+
+//                     // Khi nhấn sửa. set name và desc vào [input], đẩy dữ liệu về form
+//                         document.querySelector('input[name="name"]').value = data.name;
+//                         document.querySelector('input[name="description"]').value = data.description;
+
+//                     // Lấy id của 2 btn
+//                         var createBtn = document.querySelector('#create');
+//                         var saveBtn = document.querySelector('#save');          
+
+//                     // Khi nhấn sửa, nút create sẽ ẩn đi
+//                         createBtn.style.display = "none";
+//                         saveBtn.style.display = "block";
+
+//                     // Xử lý nút save (Yêu cầu: khi nhấn save, đẩy dữ liệu từ input ra trường name, desc ở data)
+//                     // Lắng nghe hành vi click
+//                         saveBtn.onclick = () => {
+
+//                             // Lấy dữ liệu từ input khi nhấn click
+//                                 var name = document.querySelector('input[name="name"]').value;
+//                                 var description = document.querySelector('input[name="description"]').value;
+
+//                             // Tạo biến formSaveData chứa object để nhận data
+//                                 var formSaveData = {
+//                                     name: name,
+//                                     description: description
+//                                 };
+
+//                                 var options = {
+//                                     method: "PUT",
+//                                     headers: {
+//                                         "Content-Type": "application/json",
+//                                     },
+//                                     body: JSON.stringify(formSaveData)
+//                                 }
+
+//                                 fetch(courseApi + '/' + id, options) // fetch truyền vào 2 đối số gồm: url, data dưới dạng object
+//                                     .then((response) => response.json())
+//                                     .then(() => {
+//                                         getCourses(renderCourses);
+//                                         document.querySelector('input[name="name"]').value = ""
+//                                         document.querySelector('input[name="description"]').value = ""
+//                                     });
+                                
+//                                 createBtn.style.display = "block";
+//                                 saveBtn.style.display = "none";
+//                         }
+//                 })
+//         }
+
+// ----------------------------------------------------------------
+/* 
+    ECMAScript 6 là gì?
+        - Ra đời năm 2015
+
+    1. Let, const
+    2. Template Literals
+    3. Multi-line String
+    4. Arrow function
+    5. Classes
+    6. Default parameter values
+    7. Destructuring
+    8. Rest parameters
+    9. Spread
+    10. Enhanced object literals
+    11. Tagged template literal
+    12. Modules
+*/
+
+//----------------------------------------------------------------
+/* 
+    1. Let, const
+        - Khác nhau giữa var và let, const: Scope, Hosting
+        - Scope - code block: if else, loop, {}, ...
+        ** Giống nhau: let, const, var đều có thể sd để khai báo biến, có thể gán gtrị, đều truy cập được trong block
+        ** Khác: 
+            1. Scope: Phạm vị truy cập khi định nghĩa 1 biến vs từ khoá khác nhau trong 1 code block, hay ngoài code block
+                - Var: Truy cập được vào 1 biến bên trong/ ngoài code block
+                - Let, const: Ko truy cập được vào 1 biến bên ngoài block, chỉ truy cập được bên trong block
+            2. Hosting: Nhấc định nghĩa biến lên đầu, chỉ thk nào được hỗ trợ hosting
+                - Var: được hỗ trợ
+                - Let, const: Không đc hỗ trợ
+
+        - Khác nhau giữa const và let, var: Assignment
+        ** Khác: Assignment (tức là gán)
+            - Let, var: Sẽ gán được gtrị sau lên thk đầu và in ra
+            - const: Không gán được, tức là không thể sd toán tử gán lần thứ 2
+
+*/
+    // vd: Khác nhau giữa var và let, const:
+        // Giống: Đều truy cập được vào trong block
+            // {
+            //     var course = 'Java'
+            //     let course1 = 'PHP'
+            //     const course2 = 'Ruby'
+            //     {
+            //         console.log(course1);
+            //     }
+            // }
+
+        // Khác: Scope
+            // {
+            //     var course = 'Java'
+            //     // let course1 = 'PHP'
+            //     // const course2 = 'Ruby'
+            // }
+            // console.log(course);
+
+        // Khác: Hosting
+        /* 
+            - Thông thường dùng var ta sẽ viết được như v
+            - Sau đó trình duyệt sẽ hosting sẽ đưa var a lên đầu
+            - Tức là 
+                var a;
+                a = 1:
+            - Let/ const sẽ k được hosting
+
+        */
+            // a = 1;
+
+            // var a;
+            // let a;
+            // const a;
+
+            // console.log(a);
+// ---------------------------------------------------
+    // vd: Khác nhau giữa conts và let, var:
+    // Lúc này khi gán a = 100, let/var sẽ in ra 100
+    // Còn const k in được
+        // var a = 1;
+        // let a = 1;
+        // const a = 1;
+
+        // a = 100;
+
+        // console.log(a);
+
+    // Nhưng thay đổi thuộc tính cho nó thì được
+        // const a = {
+        //     name: 'Java'
+        // };
+
+        // a.name = 100;
+
+        // console.log(a.name);
+/* 
+*** 
+    Trong thực tế khi nào cần dùng let, var, const
+        - Code thuần: Code javascript k qua thư viện, trình thông dịch nào thì dùng Var
+        - Có sd thư viện Babel: Dùng const, let
+    Khi nào dùng let/ const
+        - Khi định nghĩa biến và không gán lại biến đó: Const
+        - Khi cần gán lại giá trị cho biến: Let
+            vd cho let: let isSuccess = false;
+
+                if (...) {
+                    // Lúc này gán lại
+                    isSuccess = true;
                 }
-            };
-            fetch(courseAPI + '/' + id, options)
-                .then(response => response.json())
-                .then(() => {
-                    getCourses(renderCourses);
-                });
-        }
+*/
+// ----------------------------------------------------------------
+/* 
+    Template literals
+    Multi-line String: viết nhiều dòng
+*/
+    // // Template literals
+    //     const courseName = 'JavaScript'
+    // // Nối chuỗi thông thường
+    //     // const description1 = 'Course name:' + courseName
+    // // Dùng Template literals
+    //     const description2 = `Course name: ${courseName}`
 
-        function handleCreateForm() {
-            var createBtn = document.querySelector('#create');
+    // // Muốn thêm các kí tự đặc biệt (gọi là nội suy thì thêm dấu \)
+    //     const template = `Template string nội suy với: \${}`
 
-            createBtn.onclick = (() => {
-                var name = document.querySelector('input[name="name"]').value;
-                var description = document.querySelector('input[name="description"]').value;
+    //     console.log(template);
 
-                var formData = {
-                    name: name,
-                    description: description
-                }
-                createCourse(formData, function() {
-                    getCourses(renderCourses);
-                });
+    // Multi-line String
+        // const lines = 'Line 1\n'
+        //         + 'Line 2\n'
+        //         + 'Line 3\n'
+        //         + 'Line 4\n'
+        //         + 'Line 5\n'
 
-            });
-        }
+        // console.log(lines);
+    
+    // Viết Multi-line String theo cách Template string
+        // const lines = 
+        // `Line 1
+        // Line 2
+        // Line 3`;
 
-        function handleUpdateCourse(id) {
-            var options = {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: JSON.stringify(data)
-            };
-            fetch(courseAPI + '/' + id, options)
-                .then(response => response.json())
-                .then(() => {
-                    getCourses(renderCourses);
-                });
-        }
+        // console.log(lines);
 
-        function updateCourse() {
-            var updateBtn = document.querySelector('#update-btn');
+// ----------------------------------------------------------------
+/* 
+    Arrow function: hàm mũi tên
+        - arrow func k có context
+        - arrow func k thể sd để làm func constructor
+*/
+    // Definition function: Hàm thông thường
+        // function logger(log) {
+        //     console.log(log);
+        // }
 
-            updateBtn.onclick = (() => {
-                var name = document.querySelector('input[name="name"]').value;
-                var description = document.querySelector('input[name="description"]').value;
-            });
+        // logger('Definition function...');
 
-            var formData = {
-                    name: name,
-                    description: description
-                }
-                handleUpdateCourseurse(formData, function() {
-                    getCourses(renderCourses);
-                });
-        }
+    // Expression function: có biến gán
+        // const logger1 = function(log) {
+        //     console.log(log);
+        // }
+
+        // logger1('Expression function...');
+
+    // Arrow function
+    // vd1:
+        // const logger2 = (log) => {
+        //     console.log(log);
+        // }
+
+        // logger2('Arrow function...');
+
+    // vd2: 
+        // const sum = (a, b) => a + b;
+
+        // console.log(sum(2, 2));
+    
+    // vd3: return object phải thêm (), vì nếu để trống hàm sẽ mặc định là 1 block code
+        // const sum1 = (a, b) => ({a: a, b: b});
+
+        // console.log(sum1(2, 2));
+
+    // vd4: có nhận chỉ 1 đối số là log, có thể bỏ dấu ngoặc ở đối số đó
+        // const logger3 = log =>  console.log(log);
+        // logger3('Vd 4');
+        
+    /* 
+        vd5: cái khác của arrow func
+        - this: chính là thằng gọi đến phưogn thức getName, tức this là course
+        -> course.getName() = this.name
+        - this được hiểu là 1 context
+        - arrow func k có context -> nếu đối thành () -> undifined
+    */
+        // const course = {
+        //     name: 'Java',
+        //     // getName: function() {
+        //     //     return this.name;
+        //     // }
+
+        //     getName: () => {
+        //         return this.name;
+        //     }
+            
+        // };
+
+        // console.log(course.getName());
+
+    // vd6: arrow func k thể sd để làm func constructor
+    // Tạo func constructor
+    // Nếu thay thành arrow sẽ lỗi
+        // const Course = (name, price) => {
+        //     this.name = name;
+        //     this.price = price;
+        // }
+
+        // const jsCourse = new Course('Java', '2000')
+
+        // console.log(jsCourse);
+
+// ----------------------------------------------------------------
+/* 
+    Classes
+        - Cách viết khác của constructor func
+*/
+    // constructor func
+        // function Course(name, price) {
+        //     this.name = name;
+        //     this.price = price;
+        //     this.getName = function() {
+        //         return this.name;
+        //     }
+
+        //     this.getPrice = function() {
+        //         return this.price;
+        //     }
+
+        //     const isSuccsess = false;
+        // }
+
+    // Classes
+        // class Course {
+        //     constructor(name, price) {
+        //         this.name = name;
+        //         this.price = price;
+        //     }
+
+        //     getName() {
+        //         return this.name;
+        //     }
+
+        //     getPrice() {
+        //         return this.price;
+        //     }
+
+        //     run() {
+        //         const isSuccess = false;
+
+        //         if(...) {
+        //             isSuccess = true;
+        //         }
+        //     }
+
+        // }
+
+        // const jsCourse = new Course('JavaScript', '2000')
+        // const phpCourse = new Course('JPHPava', '2000')
+
+        // console.log(jsCourse, phpCourse);
+
+// ----------------------------------------------------------------
+/*  
+    Default parameter values: Định nghĩa ra gtrị mặc định cho tham số
+        Khi nào cần dùng nó? 
+            - Khi định nghĩa hàm, và biết đc hàm định nghĩa ra có những tham số k bắt buộc nhập
+*/
+
+    // ES5 language
+        // function logger(log) {
+        //     if (typeof log === 'undefined') {
+        //         log = 'Giá trị mặc định!';
+        //     }
+        //     console.log(log);
+        // }
+
+        // logger(undefined);
+
+    // ES6
+        // function logger(log = 'Giá trị mặc định!') {
+        //     console.log(log);
+        // }
+
+        // logger();
+
+    // vd: k cần dùng defaul ...
+    /* 
+        - Chỗ true ở đây là đối số truyền vào mà bạn có thấy if(isAlert) ko nó có nghĩa là isAlert = true 
+        -> nên mình chuyền true vào thì điều kiện đúng nên nó alert ra
+        - Còn k trueyèn vào true thì hàm sẽ là false
+    */
+        // function logger(log, isAlert = false) {
+        //     if (isAlert) return alert(log);
+        //     console.log(log);
+        // }
+
+        // logger('Message...', true);
+
+    // vd:
+    /* 
+        - Chèn biến type, biến type có giá trị mặc định = 'log' nên console[type] tương đương console.log
+        - Type ở đây nó là cái key. console bản chất là 1 object. gồm các key như log, warn, error debug...
+        - cái [type] thì anh em chỉ cần hiểu là cái type='log' là giá trị ban đầu , còn sau này anh sơn truyền warn đồ vô thì là gtrị khác thoai , k truyền mặc định là log bth á
+    */
+        // function Logger(log, type = 'log', notice){
+        //     console[type](log)
+        //     alert(notice)
+        // }
+        // Logger('Message','warn','cảnh báo')
+
+// ----------------------------------------------------------------
+/* 
+    Enhanced object literals: dùng để làm các việc sau
+        1. Định ghĩa key: value cho object dưới dạng biến
+        2. Định nghĩa phương thức cho object
+        3. Định nghĩa key cho object dưới dạng biến
+
+*/
+        
+        // var name = 'Java';
+        // var price = 1000;
+
+    // Tạo object course gồm các thông tin từ biến trên
+    // Thông thường
+        // var course = {
+        //     name: name,
+        //     price : price,
+        //     getName: function() {
+        //         return name;
+        //     }
+        // }
+
+    // Enhanced object literals
+    // 1. Định nghĩa key: value là 1 biến, tức là key vs value trùng nhau
+        // var course = {
+        //     name,
+        //     price,
+        
+        // // 2. Định nghĩa phương thức cho object
+        //     getName() {
+        //         return name;
+        //     }
+        // }
+
+        // console.log(course.getName());
+
+    // Enhanced object literals
+    // 3. Định nghĩa key cho object dưới dạng biến
+        // var filedName = 'name';
+        // var filedPrice = 'price';
+
+        // const course = {
+        //     [filedName]: 'Java',
+        //     [filedPrice]: 1000
+        // }
+
+        // console.log(course);
+
+// ----------------------------------------------------------------
+/* 
+    Destructuring: Phân rã, dùng với object và array
+    Rest parameters: Lấy ra những phần còn lại, dùng toàn tử 3 dấu chấm ...
+        - Là toán tử rest: khi nó kết hợp với Destructuring
+        - Là toán tử rest: khi sử dụng với thuộc tính của 1 function, và định nghĩa nó là 1 tham số
+*/
+
+    // Array
+        // var array = ['Java', 'PHP', 'Ruby'];
+
+    // Tạo ra 3 biến a,b,c và lưu lần lượt các array này vào
+    // Thông thường
+        // var a = array[0];
+        // var b = array[1];
+        // var c = array[2];
+
+    // Destructuring
+    // Nếu k muốn lấy b, thì để trống 
+        // var [a, ,c] = array;
+
+        // console.log(a, c);
+
+    // Là rest Khi nó kết hợp với Destructuring
+    // Rest
+    // Lấy ra a xong, và muốn lấy các thằng còn lại, dùng toàn tử 3 dấu chấm ...
+    // rest: tên biến, đặt tùy ý miễn đúng cú pháp
+        // var [a, ...rest] = array;
+
+        // console.log(a);
+        // console.log(rest);
+
+// ----------------------------------------------------------------
+    // Object
+        // var course = {
+        //     name: 'Java',
+        //     price: 1000
+        // }
+
+        // var {name, price} = course;
+
+        // console.log(name, price);
+
+    // Là rest Khi nó kết hợp với Destructuring
+    // Rest
+        // var course = {
+        //     name: 'Java',
+        //     price: 1000
+        // }
+
+        // var {name, ...rest} = course;
+
+        // console.log(name);
+        // console.log(rest);
+
+    // vd:  Hãy xóa key name của object mà k xử dụng từ khóa delete
+    // thêm cho nó 1 newObject, lúc này name sẽ biến mất và in ra 1 object mới k có name
+        // var course = {
+        //     name: 'Java',
+        //     price: 1000
+        // }
+
+        // var {name, ...newObject} = course;
+
+        // console.log(newObject);
+
+    // vd: có object con, lấy thk name của object con là children
+    // name, children: {name} nếu để v thì khi in ra sẽ bị trùng name, lúc này name cha sẽ k đc in ra
+    // Vậy ta sẽ đổi tên bằng cách thêm :
+        // var course = {
+        //     name: 'Java',
+        //     price: 1000,
+        //     children: {
+        //         name: 'PHP'
+        //     }
+        // }
+
+        // var {name: parentName, children: {name: childrentName}} = course;
+
+        // console.log(parentName);
+        // console.log(childrentName);
+
+    // vd: lấy ra 1 value mà k đc định nghĩa
+    // Lấy ra description mà k đc định nghĩa thì dùng dấu =
+        // var course = {
+        //     name: 'Java',
+        //     price: 1000,
+
+        // }
+
+        // var {name, description = 'default desc'} = course;
+
+        // console.log(name);
+        // console.log(description);
+
+    // Là rest Khi sử dụng với thuộc tính của 1 function
+    // rest lúc này nó cũng chỉ lấy các phần còn lại, sở dĩ khi in ra có tất cả bởi vì trước nó là 1 khoảng trống
+    // vd: lấy ra số 1, và rest lấy các số còn lại
+        // function logger(a, ...params) {
+        //     // khi sd rest, nó sẽ nhận lại là array []
+        //     console.log(params);
+        // }
+
+        // logger(1,2,3,4,5,6,7,8);
+
+    // Object
+    // Destructuring khi sd với hàm
+    // Thông thường
+        // function logger(obj) {  
+        //     console.log(obj.name);
+        //     console.log(obj.price);
+        // }
+
+    // Destructuring
+        // function logger({name, price, ...rest}) {  
+        //     console.log(name);
+        //     console.log(price);
+        //     console.log(rest);
+        // }
+
+        // logger({
+        //     name: 'Java',
+        //     price: 1000,
+        //     description: 'Description content'
+        // });
+
+    // Array
+        // function logger([a, b, ...rest]) {  
+        //     console.log(a);
+        //     console.log(b);
+        //     console.log(rest);
+        // }
+
+        // logger([2, 6, 8, 10, 12]);
+
+// ----------------------------------------------------------------
+/* 
+    Spread: Toán tử rải dùng ...
+        - Dùng nó để rải cho array, object
+        - Khi dùng ... trước array, object nó sẽ bỏ 2 dấu ngoặc [], {}
+        - Khi dùng để truyền đối số
+    ** Lưu ý: Nếu trùng key, nó sẽ lấy key của thằng sau
+*/
+    // vd: Nối mảng
+    // Nối arr1, arr2 vào arr3, và arr2 phải đứng trước arr1
+        // var array1 = ['Java', 'Ruby', 'PHP'];
+
+        // var array2 = ['ReactJS', 'NodeJS', 'JavaScript'];
+
+        // var array3 = [...array2, ...array1];
+
+        // console.log(array3);
+
+    // vd: Nối object
+        // var obj1 = {
+        //     name: 'Java'
+        // };
+
+        // var obj2 = {
+        //     price: 1000
+        // };
+
+        // var obj3 = {
+        //     ...obj1, 
+        //     ...obj2
+        // };
+
+        // console.log(obj3);
+
+    // vd: Lấy dữ liệu từ 2 href khác nhau
+    // Lấy khoá học ở 1 href khác, và lấy bài tập ở 1 href khác
+        // var defaultConfig = {
+        //     api: 'https://domain-trang-khoa-hoc',
+        //     apiVesion: 'v1',
+        //     other: 'other',
+        //     //
+        //     //
+        //     //
+        // }
+
+        // var exerciseConfig = {
+        //     ...defaultConfig, // Lúc này nó sẽ có all các key: value của thằng trên
+        //     api: 'https://domain-trang-bai-tap'
+        // }
+
+        // console.log(exerciseConfig);
+
+    // Khi sử dụng spread với việc truyền tham số cho hàm
+        // var array = ['Java', 'PHP', 'Ruby'];
+
+        // function logger(a, b, c) {
+        //     console.log(a, b, c);
+        // }
+
+        // logger(...array);
+
+    // Dùng chung rest và spreed
+        // var array = ['Java', 'PHP', 'Ruby'];
+
+        // function logger(...rest) { // ...rest Đây là dùng toán tử rest khi là tham số
+        //     for(var i = 0; i < rest.length; i++) {
+        //         console.log(rest[i]);
+        //     }
+        // }
+
+        // logger(...array); // ...array Đây là dùng toán tử Spread khi truyền vào đối số
+
+/*
+    Phân biệt rest và spreed
+    Xem ở đây để hiểu rõ: https://anonystick.com/blog-developer/giai-thich-ve-destructuring-rest-parameters-va-spread-syntax-trong-javascript-2020051980035339#:~:text=Spread syntax sử dụng để,giá trị không xác định
+        1. rest: là tham số (biến khởi tạo) 
+            spreed: là đối số (giá trị truyền vào)
+
+        2. rest : dùng để nén các giá trị còn lại. 
+            spread dùng để chuyển đổi giữa mảng và danh sách. sử dụng với obj arr (coppy, concat )
+*/
+    // vd: rest nén 3 số 2,3,4 vào thành 1 mảng []
+        // let arr1 = [1,2,3,4];
+
+        // let [a, ...rest] = arr
+
+        // console.log(rest); // output: [2,3,4]
+
+    // từ đoạn code trên ta suy ra được arr2 lúc này là rest sau khi được nén
+        // let arr2 = [2,3,4]
+
+    // sau đó ta dùng spreed để giải nén arr2 ra arr3 thành 2, 3, 4, tức bỏ dấu []
+        // console.log(...arr2); // ouput: 2, 3 ,4
+
+/* 
+    Thông tin thêm cho đồng môn F8. 
+    - Trong JS, Object, Array không thể sử dụng phép so sánh === được vì nó chỉ dùng được cho kiểu dữ liệu nguyên thủy thôi (Primitive data types). 
+    - Cho nên nếu muốn so thì chuyển nó về kiểu JSON. Câu này trong phỏng vấn có hỏi nhé mọi người.
+    https://www.youtube.com/watch?v=RLBqJpK1hro&t=450s 
+*/
+
+// ----------------------------------------------------------------
+/* 
+    Tagged template literals
+*/
+    /*  
+        Bài toán: 
+            - Trả về 1 chuỗi là Học lập trình JavaScript tại F8!
+            - Và highlight các biến nội suy, cụ thể là 'JavaScript', 'F8'
+        ** Theo css để highlight thì thêm thẻ span vào biến
+        --> output: Học lập trình <span>JavaScript</span> tại <span>F8</span>! 
+
+        ** Idea thực hiện: 
+            1. first - 'Học lập trình': Dùng Destructuring để lấy phần tử đầu tiên trong mảng ở tham số thứ 1
+            2. ...strings - 'tại', '!': Dùng rest để lấy các ptử còn lại trong mảng ở tham số thứ 1
+            3. ...values - 'JavaScript', 'F8': Dùng rest để lấy các ptử còn lại trong mảng ở tham số thứ 2, 3
+
+            **Bước 1, 2 thuộc tham số 1 --> bỏ vào []
+
+        ** Dùng reduce()
+            - Dùng spreed ...acc để giải mảng, tức là xóa bỏ dấu [] 
+                -> [first] = [Học lập trình] = Học lập trình
+            - Cho initial Value là first
+            - accumulator = acc: Sau đó acc sẽ bằng initial là 'Học lập trình'
+            - currentValue = curr: Sẽ là <span>${curr}</span> = <span>${course}</span> tức là <span>JavaScript</span>
+            - Tiếp đến nối strings.shift()
+                + shift(): sẽ xóa các phần từ đầu mảng và trả về pt đã xóa
+                -> strings.shift() gồm mảng có 2 ptu ['tại', '!'], lúc này sẽ xóa chữu tại, và in ra chữ tại
+
+            - Lúc này acc sẽ là 'Học lập trình <span>JavaScript</span> tại'
+            - curr sẽ là <span>${brand}</span> tức là <span>F8</span và nối tiếp strings.shift() là !
+            --> output sẽ là kết quả mong muốn
+            
+    */
+    
+        // Cách viết ngắn gọn
+        // function highlight([first, ...strings], ...values){
+        //     // console.log('First: ', first); // first: Học lập trình
+        //     // console.log('Strings: ', strings); // strings: ['tại, '!']
+        //     // console.log('Values: ', values); // values: ['JavaScript', 'F8']
+        //     return values.reduce(
+        //         (acc, curr) => [...acc, `<span>${curr}</span>`, strings.shift()],
+        //         [first]
+        //     )
+        //     .join('');
+        // }
+
+        // // Cách viết cụ thể
+        // // function highlight([first, ...strings], ...values){
+        // //     return values.reduce(function(acc, curr) {
+        // //         return [...acc, `<span>${curr}</span>`, strings.shift()]
+        // //     }, [first])
+        // //     .join('');  
+        // // }
+
+        // var brand = 'F8';
+        // var course = 'Javascript';
+
+        // const html = highlight`Học lập trình ${course} tại ${brand}!`;
+        // /*
+        //     - highlight chứa 3 tham số gồm: [['Học lập trình ', ' tại ', '!'], 'JavaScript', 'F8']
+
+        //     - Tham số thứ nhất ['Học lập trình ', ' tại ', '!']: Là 1 mảng chứa các chuỗi ko có phần nội suy
+        //     - Tham số thứ 2 và 3 ${course}, ${brand} = 'JavaScript', 'F8': Là các biến nội suy
+
+        //     - Chuỗi này nối lại sẽ thành: 'Học lập trình JavaScript tại F8!'
+        // */
+
+        // // console.log(html);
+
+        // // Lấy nd HTML ra 
+        // document.querySelector('#highlight').innerHTML = html;
+
+        // // Lặp qua các thẻ span, sau đó gán màu cho nd bên trong thẻ đó
+        // document.querySelectorAll('span').forEach(item => item.style.color = 'red')
+
+// ----------------------------------------------------------------
+/* 
+    Xem để hiể kỹ hơn bên react: https://www.youtube.com/watch?v=ESRzngRw0Z4
+    Modules: Import/ Export - Nạp/ Xuất ra
+        - Khi bóc tách 1 thành phần nó xử lí 1 nghiệp vụ cụ thể ra 1 nơi riêng
+        - Thường dùng để tách file, tập hợp file
+
+        1. Tạo 1 modules là logger.js
+        2. Biến main.js thành 1 module bằng cách thêm type = module vào thẻ script bên file html
+        3. Phải export từ bên module ra tức export bên file logger.js thì mới đc import bên file main.js
+        4. Phải import modules từ file logger.js vào
+        
+*/
+
+    // Cú pháp import: import 'tên module cần nạp' from 'file module'
+    // import mặc định
+            // import logger from './logger.js';
+
+            // logger('Test mess...', 'error');
+
+    // import thông thường
+        // import logger, { 
+        //     TYPE_LOG, 
+        //     TYPE_WARN, 
+        //     TYPE_ERROR 
+        // } from './logger.js';
+
+        // logger('Test mess...', TYPE_WARN);
+
+// ----------------------------------------------------------------
+
+    // TH1: import tách hẳn file ra ngoài, dùng destructuring
+    // {.. truyền vào đây}
+    /* 
+        1. Tạo constants.js, thêm các thk cần import vào
+        2. Sau đó làm theo các bước bên file logger.js
+        3. import các thằng đã tạo bên file constants.js
+
+    */
+        // import logger from './logger.js';
+        // import {
+        //     TYPE_LOG,
+        //     TYPE_WARN,
+        //     TYPE_ERROR
+        // } from './constants.js';
+
+        // logger('Test mess...', TYPE_ERROR);
+
+    /* 
+        ** lưu ý: import thẳng file constants.js mà k dùng destructuring
+        - Ta có thể thấy, nếu import thẳng tên module ta có thể hiểu
+            nó là import default. xem vd bên dưới: nó sẽ báo lỗi
+        - Còn nếu sử dụng destructuring nó là import thông thường
+
+    */
+        // import logger from './logger.js';
+        // import constants from './constants.js';
+
+        // console.log(constants);
+
+    /*  
+        - Vậy nếu k muốn dùng destructuring ta dùng * as,
+        - dấu * là lấy tất cả thằng const nhỏ bên file constants, 
+        - as là gọi tới 1 aliases khác cụ thể là constants và biến nó thành 1 object
+
+    */
+        // import logger from './logger.js';
+        // import * as constants from './constants.js';
+
+        // console.log(constants);
+ 
+// ----------------------------------------------------------------
+// TH2: Đưa logger.js vào trong 1 thư mục riêng
+/* 
+    Trong folder logger có 1 file là index.js
+    idea thực hiện:
+        ** k muốn import thằng logger trực tiếp từ file logger.js 
+            mà muốn lấy ra từ folder logger
+    thực hiện:
+        1. tạo file index.js trong folder logger, và export theo cú pháp sau: xem bên file index.js
+        2. viết cú pháp như dòng 3905. 3909, 3911
+*/
+
+    // import logger from './logger/index.js'; // này là import default
+
+    // import { logger2 } from './logger/index.js'; // này là import thông thường
+
+    // import * as constants from './constants.js';
+
+    // console.log(constants);
+
+    // logger2('Test mess...', constants.TYPE_WARN);
+
+// --------------------------------------------------------------------
+/*      
+    Optional chaining: cú pháp (?.)
+    - Xem trong link để hiểu: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
+    Hoặc xem: https://javascript.info/optional-chaining
+        Tóm lại bài này theo anh Sơn nói như sau:
+        Nếu ta nghi ngờ :
+            - Trong object có key k tồn tại
+            - Có tồn tại mảng(array) đó hay ko 
+            - Có tồn tại hàm đó hay ko
+            => Thì lúc call đến 3 Ttrường hợp trên ta thêm toán tử ?. vào sau các đối tượng mà ta nghi ngờ
+
+        ** Bổ sung một chút chỗ kiểm tra hàm. 
+        - Nếu bạn không biết hàm myFun này có tồn tại hay không mà bạn vẫn muốn gọi nó bạn sẽ dùng obj.myFun?.(). Nếu ko có hàm này thì sẽ trả ra undefined. 
+        - Nhưng nếu myFun lại trùng với tên của 1 thuộc tính thì lại trả ra lỗi.
+
+*/
+
+    //VD1: obj
+        // const obj = {
+        //     name: 'Alice',
+        //     cat: {
+        //         name: 'Dinah',
+        //         cat2: {
+        //             name: 'Dinah 2',
+        //             cat3: {
+        //                 name: 'Dinah 3'
+        //             }
+        //         }
+        //     }
+        // };
+
+        // if (
+        //     // C1: Kiểm tra xem có key đó trong obj ko
+        //         // obj.cat && 
+        //         // obj.cat.cat2 && 
+        //         // obj.cat.cat2.cat3
+
+        //     // C2:
+        //         obj?.cat?.cat2?.cat3
+        // ) {
+        //     console.log(obj.cat.cat2.cat3.name)
+        // }
+
+    //VD2: func
+        // const obj1 = {
+        //     getName(value) {
+        //         console.log(value);
+        //     }
+        // }
+
+        // // Kiểm tra xem hàm getName có tồn tại k
+        // obj1.getName?.(123)
+
+// ----------------------------------------------------------------
+/* 
+    Xây dựng Tabs UI
+*/
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+    
+            
+
+
+
+
+
+    
 
 
     
